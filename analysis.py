@@ -24,17 +24,17 @@ def compute_totals(df):
     return total_cases, total_deaths, total_vaccinations
 
 
-def calculate_vaccination_rate(df):
-    df["vaccination_rate"] = df["total_vaccinations"] / df["population"] * 100
+def calculate_rolling_average(df):
+    df["rolling_7_day_avg"] = df["total_cases"].rolling(window=7).mean()
     return df
 
 
-def plot_vaccination_rate(df):
-    top_countries = df.groupby("location").last().nlargest(5, "vaccination_rate")
-    plt.bar(top_countries.index, top_countries["vaccination_rate"])
-    plt.title("Top 5 Countries by Vaccination Rate")
-    plt.xlabel("Country")
-    plt.ylabel("Vaccination Rate (%)")
-    plt.xticks(rotation=45)
-    plt.tight_layout()
+def plot_daily_new_cases(df):
+    plt.figure(figsize=(12, 6))
+    plt.plot(df["date"], df["total_cases"], label="Daily Cases")
+    plt.plot(df["date"], df["rolling_7_day_avg"], label="7-Day Rolling Average", color='orange')
+    plt.xlabel("Date")
+    plt.ylabel("Number of Cases")
+    plt.title("Daily New Cases with 7-Day Average")
+    plt.legend()
     plt.show()
