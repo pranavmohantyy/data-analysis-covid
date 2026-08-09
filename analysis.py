@@ -24,16 +24,18 @@ def compute_totals(df):
     return total_cases, total_deaths, total_vaccinations
 
 
-def plot_daily_new_cases(df):
-    top_countries = df["location"].value_counts().head(5).index.tolist()
-    df["date"] = pd.to_datetime(df["date"])
-    plt.figure(figsize=(12, 6))
-    for country in top_countries:
-        country_data = filter_by_country(df, country)
-        plt.plot(country_data["date"], country_data["new_cases"], label=country)
-    plt.title("Daily New Cases for Top 5 Countries")
+def calculate_death_rate(df):
+    df["death_rate"] = df["total_deaths"] / df["total_cases"] * 100
+    return df
+
+
+def plot_death_rate(df):
+    plt.figure(figsize=(10, 5))
+    plt.plot(df["date"], df["death_rate"], label="Death Rate (%)")
+    plt.title("COVID-19 Death Rate Over Time")
     plt.xlabel("Date")
-    plt.ylabel("Daily New Cases")
+    plt.ylabel("Death Rate (%)")
+    plt.xticks(rotation=45)
     plt.legend()
-    plt.savefig("plots/top5_daily_new_cases.png")
-    plt.close()
+    plt.tight_layout()
+    plt.show()
