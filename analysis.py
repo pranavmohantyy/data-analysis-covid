@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
 def load_data():
     df = pd.read_csv("owid-covid-data.csv")
@@ -22,8 +23,17 @@ def compute_totals(df):
     total_vaccinations = df["total_vaccinations"].sum()
     return total_cases, total_deaths, total_vaccinations
 
-if __name__ == "__main__":
-    data = load_data()
-    filtered_data = filter_by_country(data, "United States")
-    totals = compute_totals(filtered_data)
-    print(totals)
+
+def plot_daily_new_cases(df):
+    top_countries = df["location"].value_counts().head(5).index.tolist()
+    df["date"] = pd.to_datetime(df["date"])
+    plt.figure(figsize=(12, 6))
+    for country in top_countries:
+        country_data = filter_by_country(df, country)
+        plt.plot(country_data["date"], country_data["new_cases"], label=country)
+    plt.title("Daily New Cases for Top 5 Countries")
+    plt.xlabel("Date")
+    plt.ylabel("Daily New Cases")
+    plt.legend()
+    plt.savefig("plots/top5_daily_new_cases.png")
+    plt.close()
