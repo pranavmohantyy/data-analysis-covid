@@ -24,18 +24,17 @@ def compute_totals(df):
     return total_cases, total_deaths, total_vaccinations
 
 
-def calculate_death_rate(df):
-    df["death_rate"] = df["total_deaths"] / df["total_cases"] * 100
+def calculate_vaccination_rate(df):
+    df["vaccination_rate"] = df["total_vaccinations"] / df["population"] * 100
     return df
 
 
-def plot_death_rate(df):
-    plt.figure(figsize=(10, 5))
-    plt.plot(df["date"], df["death_rate"], label="Death Rate (%)")
-    plt.title("COVID-19 Death Rate Over Time")
-    plt.xlabel("Date")
-    plt.ylabel("Death Rate (%)")
+def plot_vaccination_rate(df):
+    top_countries = df.groupby("location").last().nlargest(5, "vaccination_rate")
+    plt.bar(top_countries.index, top_countries["vaccination_rate"])
+    plt.title("Top 5 Countries by Vaccination Rate")
+    plt.xlabel("Country")
+    plt.ylabel("Vaccination Rate (%)")
     plt.xticks(rotation=45)
-    plt.legend()
     plt.tight_layout()
     plt.show()
